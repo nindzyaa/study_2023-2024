@@ -1,27 +1,33 @@
 ---
-# Front matter
-title: "Лабораторная работа №6"
-subtitle: "Информационная безопасность"
-author: "Банникова Екатерина Алексеевна"
+# Титульный лист
+title: |
+    Лабораторная работа №6.  
+    Разложение чисел на множители
+author:
+- "Студентка: Царитова Нина Аведиковна"
+- "Группа: НФИмд-02-23"
+- "Преподаватель: Кулябов Дмитрий Сергеевич,"
+- "д-р.ф.-м.н., проф."
 
-## Generic otions
+# Общие опции
 lang: ru-RU
 toc-title: "Содержание"
 
-## Bibliography
+# Библиография
 bibliography: bib/cite.bib
 csl: pandoc/csl/gost-r-7-0-5-2008-numeric.csl
 
-## Pdf output format
-toc: true # Table of contents
-toc-depth: 2
-lof: true # List of figures
-lot: true # List of tables
+# Конвертация в ПДФ
+toc: true # Содержание
+toc_depth: 2
+lof: true # Список изображений
+lot: true # Список таблиц
 fontsize: 12pt
 linestretch: 1.5
 papersize: a4
 documentclass: scrreprt
-## I18n polyglossia
+
+## I18n
 polyglossia-lang:
   name: russian
   options:
@@ -29,10 +35,7 @@ polyglossia-lang:
 	- babelshorthands=true
 polyglossia-otherlangs:
   name: english
-## I18n babel
-babel-lang: russian
-babel-otherlangs: english
-## Fonts
+### Шрифты
 mainfont: PT Serif
 romanfont: PT Serif
 sansfont: PT Sans
@@ -40,7 +43,7 @@ monofont: PT Mono
 mainfontoptions: Ligatures=TeX
 romanfontoptions: Ligatures=TeX
 sansfontoptions: Ligatures=TeX,Scale=MatchLowercase
-monofontoptions: Scale=MatchLowercase,Scale=0.9
+monofontoptions: Scale=MatchLowercase,Scale=0.8
 ## Biblatex
 biblatex: true
 biblio-style: "gost-numeric"
@@ -51,101 +54,95 @@ biblatexoptions:
   - language=auto
   - autolang=other*
   - citestyle=gost-numeric
-## Pandoc-crossref LaTeX customization
-figureTitle: "Рис."
-tableTitle: "Таблица"
-listingTitle: "Листинг"
-lofTitle: "Список иллюстраций"
-lotTitle: "Список таблиц"
-lolTitle: "Листинги"
+
 ## Misc options
 indent: true
 header-includes:
-  - \usepackage{indentfirst}
+  - \linepenalty=10 # the penalty added to the badness of each line within a paragraph (no associated penalty node) Increasing the value makes tex try to have fewer lines in the paragraph.
+  - \interlinepenalty=0 # value of the penalty (node) added after each line of a paragraph.
+  - \hyphenpenalty=50 # the penalty for line breaking at an automatically inserted hyphen
+  - \exhyphenpenalty=50 # the penalty for line breaking at an explicit hyphen
+  - \binoppenalty=700 # the penalty for breaking a line at a binary operator
+  - \relpenalty=500 # the penalty for breaking a line at a relation
+  - \clubpenalty=150 # extra penalty for breaking after first line of a paragraph
+  - \widowpenalty=150 # extra penalty for breaking before last line of a paragraph
+  - \displaywidowpenalty=50 # extra penalty for breaking before last line before a display math
+  - \brokenpenalty=100 # extra penalty for page breaking after a hyphenated line
+  - \predisplaypenalty=10000 # penalty for breaking before a display
+  - \postdisplaypenalty=0 # penalty for breaking after a display
+  - \floatingpenalty = 20000 # penalty for splitting an insertion (can only be split footnote in standard LaTeX)
+  - \raggedbottom # or \flushbottom
   - \usepackage{float} # keep figures where there are in the text
   - \floatplacement{figure}{H} # keep figures where there are in the text
+
+  - \usepackage{titling}
+  - \setlength{\droptitle}{-9em}
+  - \pretitle{\begin{center}
+      \textbf{РОССИЙСКИЙ УНИВЕРСИТЕТ ДРУЖБЫ НАРОДОВ}\\
+      \textbf{Факультет физико-математических и естественных наук}\\
+      \textbf{Кафедра прикладной информатики и теории вероятностей}
+      \vspace{9cm}
+      \LARGE\\}
+  - \posttitle{\vskip 1em \Large \emph{\textit{Дисциплина$:$ Математические основы защиты информации и информационной безопасности}} \end{center}}
+  - \preauthor{\vskip 3em \begin{flushright} \large \begin{tabular}[t]{c}}
+  - \postauthor{\end{tabular}\par\end{flushright} \vfill \vskip 5em}
 ---
 
 # Цель работы
 
-Развить навыки администрирования ОС Linux. Получить первое практическое знакомство с технологией SELinux1. 
-Проверить работу SELinx на практике совместно с веб-сервером Apache.
+Целью данной лабораторной работы является ознакомление с алгоритмами для разложения чисел на множители.
+
+# Задание
+
+1. Реализовать рассмотренный в инструкции к лабораторной работе алгоритм для разложения чисел на множители программно.
+
+2. Разложить на множители данное в примере к лабораторной работе число.
 
 # Теоретическое введение
+В данной лабораторной работе предметом нашего изучения стал P-метод Полларда.
 
+## Факторизация целых чисел
 
+Факторизацией натурального числа называется его разложение в произведение простых множителей. Существование и единственность (с точностью до порядка следования множителей) такого разложения следует из основной теоремы арифметики.
+
+В отличие от задачи распознавания простоты числа, факторизация предположительно является вычислительно сложной задачей. В настоящее время неизвестно, существует ли эффективный не квантовый алгоритм факторизации целых чисел. Однако доказательства того, что не существует решения этой задачи за полиномиальное время, также нет.
+
+Предположение о том, что для больших чисел задача факторизации является вычислительно сложной, лежит в основе широко используемых алгоритмов (например, RSA). Многие области математики и информатики находят применение в решении этой задачи.
+
+## P-алгоритм Полларда
+
+Ро-алгоритм ($\rho$ -алгоритм) — предложенный Джоном Поллардом в 1975 году алгоритм, служащий для факторизации (разложения на множители) целых чисел. Данный алгоритм основывается на алгоритме Флойда поиска длины цикла в последовательности и некоторых следствиях из парадокса дней рождения. Алгоритм наиболее эффективен при факторизации составных чисел с достаточно малыми множителями в разложении.
+
+Также хотелось бы упомянуть P-1 алгоритм Полларда.
+
+## (P-1) алгоритм Полларда
+
+(P-1) алгоритм Полларда впервые опубликован британским математиком Джоном Поллардом в 1974 году. Именно появление данного алгоритма привело к изменению понятия сильного простого числа, используемого в криптографии, нестрого говоря, простого числа, для которого p-1 имеет достаточно большие делители. В современных криптосистемах стараются использовать именно сильные простые числа, так как это повышает стойкость используемых алгоритмов и систем в целом.
 
 # Выполнение лабораторной работы
 
-Вошла в систему с полученными учётными данными и убедилась, что SELinux работает в режиме enforcing политики targeted с помощью команд getenforce и sestatus.
+**Примечание:** комментарии по коду представлены на скриншотах к каждому из проделанных заданий.
 
-![getenforce и sestatus](image/1.PNG){ #fig:1 width=70% }
+В соответствии с заданием, была написана программа по воплощению алгоритма по разложение чисел на множители.
 
-Обратилась с помощью браузера к веб-серверу, запущенному на компьютере, и убедилась, что последний работает:
-service httpd status
-или
-/etc/rc.d/init.d/httpd status
+Программный код и результаты выполнения программ представлен ниже.
 
-![Работающий сервер](image/2.PNG){ #fig:2 width=70% }
+## P-метод Полларда
 
-Нашла веб-сервер Apache в списке процессов, определила его контекст безопасности и занесла эту информацию в отчёт. 
+![Входные данные для реализации алгоритма для разложения чисел на множители](image/1.png){ #fig:001 width=70% }
 
-![Контекст безопасности Apache](image/3.PNG){ #fig:3 width=70% }
+![Реализация алгоритма p-метод Полларда](image/2.png){ #fig:002 width=70% }
 
-Посмотрела текущее состояние переключателей SELinux для Apache с помощью команды sestatus -bigrep httpd
+![Реализация алгоритма p-метод Полларда](image/3.png){ #fig:003 width=70% }
 
-![Состояние переключателей](image/4.PNG){ #fig:4 width=70% }
+Был взяты данные из пояснения к лабораторной работе. Они были подставлены в программу. Получен следующий результат (см. рис. [-@fig:04).
 
-Посмотрела статистику по политике с помощью команды seinfo, также определила множество пользователей, ролей, типов.
-
-![Статистика](image/5.PNG){ #fig:5 width=70% }
-
-Определила тип файлов и поддиректорий, находящихся в директории /var/www, с помощью команды ls -lZ /var/www
-
-![Данные директорий](image/6.PNG){ #fig:6 width=70% }
-
-Определила тип файлов, находящихся в директории /var/www/html: ls -lZ /var/www/html
-
-![Тип файлов](image/7.PNG){ #fig:7 width=70% }
-
-
-Определила круг пользователей, которым разрешено создание файлов в директории /var/www/html.
-
-![Круг пользователей](image/8.PNG){ #fig:8 width=70% }
-
-
-Создала от имени суперпользователя (так как в дистрибутиве после установки только ему разрешена запись в директорию) html-файл. Проверила контекст созданного файла. 
-
-Обратилась к файлу через веб-сервер, введя в браузере адрес http://127.0.0.1/test.html. Убедилась, что файл был успешно отображён
-
-![Просмотр файла в веб-браузере](image/9.PNG){ #fig:9 width=70% }
-
-Изучила справку man httpd_selinux и выяснила, какие контексты файлов определены для httpd. Сопоставила их с типом файла
-test.html. Изменила контекст файла /var/www/html/test.html 
-
-Попробовала ещё раз получить доступ к файлу через веб-сервер, введя в браузере адрес http://127.0.0.1/test.html. Получила сообщение об ошибке:
-
-![Сообщение об ошибке](image/10.PNG){ #fig:10 width=70% }
-
-Проанализировала ситуацию. Почему файл не был отображён, если права доступа позволяют читать этот файл любому пользователю?
-Просмотрела log-файлы веб-сервера Apache.
-
-Установила веб-сервер Apache на прослушивание TCP-порта 81, изменяя строку Listen
-
-![Прослушивание](image/11.PNG){ #fig:11 width=70% }
-
-Перезапустила сервер и посмотрела данные log-файлов веб-сервера Apache. Установила для веб-сервера Apache порт TCP-81 и проверила его наличие
-
-![Порт](image/12.PNG){ #fig:12 width=70% }
-
-Попробовала запустить веб-сервер Apache ещё раз.
-
-![Повторный просмотр файла](image/13.PNG){ #fig:13 width=70% }
-
-Удалила привязку http_port_t к 81 порту. Удалила файл test.html
-
+![Результат реализации алгоритма p-метод Полларда на примере](image/r1.png){ #fig:004 width=70% }
 
 # Выводы
 
-Развила навыки администрирования ОС Linux. Получила первое практическое знакомство с технологией SELinux1. 
-Проверила работу SELinx на практике совместно с веб-сервером Apache.
+Таким образом, была достигнута цель, поставленная в начале лабораторной работы: я ознакомилась с алгоритмом разложения чисел (P-методом Полларда), реализовала данный алгоритмй на языке программирования Python 3, получила результат, схожий с данным в описании к лабораторной работе.
+
+# Список литературы{.unnumbered}
+
+1. https://ru.wikipedia.org/wiki/Ро-алгоритм_Полларда
